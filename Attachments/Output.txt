@@ -1,5 +1,0 @@
-ID Name Unit Description Required
-1 Tube Meter Seamless steel pipe 5
-2 Brick Piece Clay bricks 7
-3 Glass Metre squared Glass 20
-4 FUM Meter Feed FUM 1000

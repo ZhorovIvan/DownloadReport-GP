@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "mHWrGK/BPRXumr3Biost97JTLy1Ube+EsIPDuZewWMQZRD/wP6u0ZW5Z9PIjFwLuRK14FsRI2C/wCAGz6WrZ4Q==",
+  "dgSpecHash": "g5oWinCFR2rGXmgKSG65LMJuRKrM5UioWGMvEDJsi5G9MIgGR/IhG3Gpga6XGwluhZZDqKSmCV09QyUiQBMahA==",
   "success": true,
   "projectFilePath": "C:\\Users\\jorov\\OneDrive\\Документы\\UiPath\\GazpromTest\\.local\\",
   "expectedPackageFiles": [
@@ -104,6 +104,7 @@
     "C:\\Users\\jorov\\.nuget\\packages\\uipath.ocr.contracts\\2.10.0-preview\\uipath.ocr.contracts.2.10.0-preview.nupkg.sha512",
     "C:\\Users\\jorov\\.nuget\\packages\\uipath.pdf.activities\\3.5.0-preview\\uipath.pdf.activities.3.5.0-preview.nupkg.sha512",
     "C:\\Users\\jorov\\.nuget\\packages\\uipath.platform\\21.10.0\\uipath.platform.21.10.0.nupkg.sha512",
+    "C:\\Users\\jorov\\.nuget\\packages\\uipath.python.activities\\1.4.1\\uipath.python.activities.1.4.1.nupkg.sha512",
     "C:\\Users\\jorov\\.nuget\\packages\\uipath.system.activities\\21.10.3\\uipath.system.activities.21.10.3.nupkg.sha512",
     "C:\\Users\\jorov\\.nuget\\packages\\uipath.telemetry.client\\1.5.3\\uipath.telemetry.client.1.5.3.nupkg.sha512",
     "C:\\Users\\jorov\\.nuget\\packages\\uipath.uiautomation.activities\\21.10.4\\uipath.uiautomation.activities.21.10.4.nupkg.sha512",

@@ -1,9 +1,10 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="ProcessReadingEmails" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=mscorlib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:snm="clr-namespace:System.Net.Mail;assembly=System" xmlns:ss="clr-namespace:System.Security;assembly=mscorlib" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="ProcessReadingEmails" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:sc="clr-namespace:System.Collections;assembly=mscorlib" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:snm="clr-namespace:System.Net.Mail;assembly=System" xmlns:ss="clr-namespace:System.Security;assembly=mscorlib" xmlns:this="clr-namespace:" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="In_Password" Type="InArgument(ss:SecureString)" />
     <x:Property Name="In_Username" Type="InArgument(x:String)" />
     <x:Property Name="In_AllowedEmails" Type="InArgument(sc:ArrayList)" />
     <x:Property Name="In_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="In_Connection" Type="InArgument(ui:DatabaseConnection)" />
   </x:Members>
   <this:ProcessReadingEmails.In_Password>
     <InArgument x:TypeArguments="ss:SecureString" />
@@ -14,10 +15,10 @@
   <mva:VisualBasic.Settings>
     <x:Null />
   </mva:VisualBasic.Settings>
-  <sap:VirtualizedContainerService.HintSize>1048,827</sap:VirtualizedContainerService.HintSize>
+  <sap:VirtualizedContainerService.HintSize>1094,827</sap:VirtualizedContainerService.HintSize>
   <sap2010:WorkflowViewState.IdRef>ProcessReadingEmails_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
-    <scg:List x:TypeArguments="x:String" Capacity="42">
+    <scg:List x:TypeArguments="x:String" Capacity="80">
       <x:String>System.Activities</x:String>
       <x:String>System.Activities.Statements</x:String>
       <x:String>System.Activities.Expressions</x:String>
@@ -55,10 +56,14 @@
       <x:String>UiPath.Mail.Exchange</x:String>
       <x:String>UiPath.Mail.Exchange.Activities</x:String>
       <x:String>System.Runtime.Serialization</x:String>
+      <x:String>System.ComponentModel</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+      <x:String>UiPath.Database</x:String>
+      <x:String>UiPath.Mail.SMTP.Activities</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
-    <scg:List x:TypeArguments="AssemblyReference" Capacity="34">
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="33">
       <AssemblyReference>System.Activities</AssemblyReference>
       <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
       <AssemblyReference>mscorlib</AssemblyReference>
@@ -90,7 +95,8 @@
       <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
       <AssemblyReference>Microsoft.Exchange.WebServices</AssemblyReference>
       <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
-      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
+      <AssemblyReference>UiPath.Python</AssemblyReference>
+      <AssemblyReference>UiPath.Database</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
   <Flowchart DisplayName="ProcessReadingEmails" sap:VirtualizedContainerService.HintSize="634,740" sap2010:WorkflowViewState.IdRef="Flowchart_1">
@@ -98,6 +104,8 @@
       <Variable x:TypeArguments="scg:List(snm:MailMessage)" Name="allMails" />
       <Variable x:TypeArguments="x:String" Name="pas" />
       <Variable x:TypeArguments="x:Int32" Name="mailsSum" />
+      <Variable x:TypeArguments="sd:DataTable" Name="materialsData" />
+      <Variable x:TypeArguments="x:String" Name="answer" />
     </Flowchart.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -125,7 +133,7 @@
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
-        <ui:GetIMAPMailMessages ClientName="{x:Null}" ClientVersion="{x:Null}" FilterExpression="{x:Null}" Password="{x:Null}" TimeoutMS="{x:Null}" DeleteMessages="False" DisplayName="Get IMAP Mail Messages" Email="[In_Username]" EnableSSL="True" FilterExpressionCharacterSet="US-ASCII" sap:VirtualizedContainerService.HintSize="262,22" sap2010:WorkflowViewState.IdRef="GetIMAPMailMessages_1" MailFolder="Inbox" MarkAsRead="True" Messages="[allMails]" OnlyUnreadMessages="True" OrderByDate="NewestFirst" Port="993" SecureConnection="Auto" SecurePassword="[In_Password]" Server="imap.gmail.com" Top="10" />
+        <ui:GetIMAPMailMessages ClientName="{x:Null}" ClientVersion="{x:Null}" FilterExpression="{x:Null}" Password="{x:Null}" TimeoutMS="{x:Null}" DeleteMessages="False" DisplayName="Get IMAP Mail Messages" Email="[In_Username]" EnableSSL="True" FilterExpressionCharacterSet="US-ASCII" sap:VirtualizedContainerService.HintSize="262,22" sap2010:WorkflowViewState.IdRef="GetIMAPMailMessages_1" MailFolder="Inbox" MarkAsRead="True" Messages="[allMails]" OnlyUnreadMessages="False" OrderByDate="NewestFirst" Port="993" SecureConnection="Auto" SecurePassword="[In_Password]" Server="imap.gmail.com" Top="10" />
         <Assign DisplayName="Definite amount of letters - Assign" sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_1">
           <Assign.To>
             <OutArgument x:TypeArguments="x:Int32">[mailsSum]</OutArgument>
@@ -152,54 +160,69 @@
                 <scg:Dictionary x:TypeArguments="x:String, x:Object">
                   <av:Point x:Key="ShapeLocation">200,467</av:Point>
                   <av:Size x:Key="ShapeSize">200,66</av:Size>
+                  <av:PointCollection x:Key="ConnectorLocation">300,533 300,557.52 471,557.52 471,200 400,200</av:PointCollection>
                 </scg:Dictionary>
               </sap:WorkflowViewStateService.ViewState>
-              <Sequence DisplayName="Send message - Sequence" sap:VirtualizedContainerService.HintSize="604,699" sap2010:WorkflowViewState.IdRef="Sequence_2">
+              <Sequence DisplayName="Send message - Sequence" sap:VirtualizedContainerService.HintSize="875,1010" sap2010:WorkflowViewState.IdRef="Sequence_2">
                 <sap:WorkflowViewStateService.ViewState>
                   <scg:Dictionary x:TypeArguments="x:String, x:Object">
                     <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                   </scg:Dictionary>
                 </sap:WorkflowViewStateService.ViewState>
-                <ui:ForEach x:TypeArguments="snm:MailMessage" CurrentIndex="{x:Null}" DisplayName="Iterate mails - For Each" sap:VirtualizedContainerService.HintSize="562,607" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[allMails]">
+                <ui:ForEach x:TypeArguments="snm:MailMessage" CurrentIndex="{x:Null}" DisplayName="Iterate mails - For Each" sap:VirtualizedContainerService.HintSize="833,918" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[allMails]">
                   <ui:ForEach.Body>
                     <ActivityAction x:TypeArguments="snm:MailMessage">
                       <ActivityAction.Argument>
                         <DelegateInArgument x:TypeArguments="snm:MailMessage" Name="mail" />
                       </ActivityAction.Argument>
-                      <Sequence DisplayName="Body - Sequence" sap:VirtualizedContainerService.HintSize="526,483" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                      <Sequence DisplayName="Body - Sequence" sap:VirtualizedContainerService.HintSize="797,794" sap2010:WorkflowViewState.IdRef="Sequence_5">
                         <sap:WorkflowViewStateService.ViewState>
                           <scg:Dictionary x:TypeArguments="x:String, x:Object">
                             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                           </scg:Dictionary>
                         </sap:WorkflowViewStateService.ViewState>
-                        <If Condition="[In_AllowedEmails.Contains(mail.From.Address)]" DisplayName="Check current email - If" sap:VirtualizedContainerService.HintSize="484,391" sap2010:WorkflowViewState.IdRef="If_1">
+                        <If Condition="[In_AllowedEmails.Contains(mail.From.Address)]" DisplayName="Check current email - If" sap:VirtualizedContainerService.HintSize="755,702" sap2010:WorkflowViewState.IdRef="If_1">
                           <If.Then>
-                            <Sequence DisplayName="If email containts - Sequence" sap:VirtualizedContainerService.HintSize="376,204" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                            <Sequence DisplayName="If email containts - Sequence" sap:VirtualizedContainerService.HintSize="376,544" sap2010:WorkflowViewState.IdRef="Sequence_6">
                               <sap:WorkflowViewStateService.ViewState>
                                 <scg:Dictionary x:TypeArguments="x:String, x:Object">
                                   <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                                 </scg:Dictionary>
                               </sap:WorkflowViewStateService.ViewState>
-                              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Ckeck attachment file - Invoke Workflow File" sap:VirtualizedContainerService.HintSize="334,112" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="FormEmail.xaml">
+                              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Ckeck attachment file - Invoke Workflow File" sap:VirtualizedContainerService.HintSize="334,112" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="ReadDataTable.xaml">
                                 <ui:InvokeWorkflowFile.Arguments>
-                                  <InArgument x:TypeArguments="snm:MailMessage" x:Key="In_Email">
-                                    <mva:VisualBasicValue x:TypeArguments="snm:MailMessage" ExpressionText="mail" />
-                                  </InArgument>
-                                  <InArgument x:TypeArguments="x:String" x:Key="In_PathToAttachmentFolder">
-                                    <Literal x:TypeArguments="x:String">Attachments</Literal>
-                                  </InArgument>
+                                  <InArgument x:TypeArguments="snm:MailMessage" x:Key="In_Email">[mail]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="In_PathToAttachmentFolder">[In_Config("PathToAttachments").ToString]</InArgument>
+                                  <InArgument x:TypeArguments="x:String" x:Key="In_PathToPython">[In_Config("PathToPathon").ToString]</InArgument>
+                                  <OutArgument x:TypeArguments="sd:DataTable" x:Key="Out_DataTable">[materialsData]</OutArgument>
                                 </ui:InvokeWorkflowFile.Arguments>
                               </ui:InvokeWorkflowFile>
+                              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Check mysql - Invoke Workflow File" sap:VirtualizedContainerService.HintSize="334,112" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="CheckDatabase.xaml">
+                                <ui:InvokeWorkflowFile.Arguments>
+                                  <InArgument x:TypeArguments="sd:DataTable" x:Key="In_DataTable">
+                                    <mva:VisualBasicValue x:TypeArguments="sd:DataTable" ExpressionText="materialsData" />
+                                  </InArgument>
+                                  <InArgument x:TypeArguments="ui:DatabaseConnection" x:Key="In_Connection">
+                                    <mva:VisualBasicValue x:TypeArguments="ui:DatabaseConnection" ExpressionText="In_Connection" />
+                                  </InArgument>
+                                  <OutArgument x:TypeArguments="x:String" x:Key="Out_Answer">
+                                    <mva:VisualBasicReference x:TypeArguments="x:String" ExpressionText="answer" />
+                                  </OutArgument>
+                                </ui:InvokeWorkflowFile.Arguments>
+                              </ui:InvokeWorkflowFile>
+                              <ui:SendMail Bcc="{x:Null}" Cc="{x:Null}" MailMessage="{x:Null}" Password="{x:Null}" ReplyTo="{x:Null}" TimeoutMS="{x:Null}" Body="[answer]" DisplayName="Send SMTP Mail Message" Email="[In_Username]" EnableSSL="True" From="[In_Username]" sap:VirtualizedContainerService.HintSize="334,148" sap2010:WorkflowViewState.IdRef="SendMail_1" IsBodyHtml="False" Name="[In_Username]" Port="465" SecureConnection="Auto" SecurePassword="[In_Password]" Server="smtp.gmail.com" Subject="Answer status" To="[mail.From.Address.ToString]">
+                                <ui:SendMail.Files>
+                                  <scg:List x:TypeArguments="InArgument(x:String)" Capacity="0" />
+                                </ui:SendMail.Files>
+                              </ui:SendMail>
                             </Sequence>
                           </If.Then>
                           <If.Else>
-                            <Sequence sap:VirtualizedContainerService.HintSize="528,83" sap2010:WorkflowViewState.IdRef="Sequence_7">
-                              <sap:WorkflowViewStateService.ViewState>
-                                <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-                                </scg:Dictionary>
-                              </sap:WorkflowViewStateService.ViewState>
-                            </Sequence>
+                            <ui:SendMail Bcc="{x:Null}" Cc="{x:Null}" MailMessage="{x:Null}" Password="{x:Null}" ReplyTo="{x:Null}" TimeoutMS="{x:Null}" Body="No access" DisplayName="Send SMTP Mail Message" Email="[In_Username]" EnableSSL="True" From="[In_Username]" sap:VirtualizedContainerService.HintSize="334,148" sap2010:WorkflowViewState.IdRef="SendMail_3" IsBodyHtml="False" Name="[In_Username]" Port="465" SecureConnection="Auto" SecurePassword="[In_Password]" Server="smtp.gmail.com" Subject="Answer status" To="[mail.From.Address.ToString]">
+                              <ui:SendMail.Files>
+                                <scg:List x:TypeArguments="InArgument(x:String)" Capacity="0" />
+                              </ui:SendMail.Files>
+                            </ui:SendMail>
                           </If.Else>
                         </If>
                       </Sequence>
@@ -207,6 +230,9 @@
                   </ui:ForEach.Body>
                 </ui:ForEach>
               </Sequence>
+              <FlowStep.Next>
+                <x:Reference>__ReferenceID0</x:Reference>
+              </FlowStep.Next>
             </FlowStep>
           </FlowDecision.False>
         </FlowDecision>
