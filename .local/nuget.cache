@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "g5oWinCFR2rGXmgKSG65LMJuRKrM5UioWGMvEDJsi5G9MIgGR/IhG3Gpga6XGwluhZZDqKSmCV09QyUiQBMahA==",
+  "dgSpecHash": "xqc1mLXtbGF6mEqWMCUO5pyEZMrDkIfTs7ousAhA6xVpI7moX60kXi+JjJhH/p/F4Z4KFMgwcXwsk+vZY34C5A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\jorov\\OneDrive\\Документы\\UiPath\\GazpromTest\\.local\\",
+  "projectFilePath": "C:\\Users\\jorov\\Desktop\\gp\\.local\\",
   "expectedPackageFiles": [
     "C:\\Users\\jorov\\.nuget\\packages\\bitmiracle.docotic.pdf\\7.5.11645\\bitmiracle.docotic.pdf.7.5.11645.nupkg.sha512",
     "C:\\Users\\jorov\\.nuget\\packages\\bitmiracle.libtiff.net\\2.4.649\\bitmiracle.libtiff.net.2.4.649.nupkg.sha512",
