@@ -9338,9 +9338,9 @@
     "restore": {
       "projectUniqueName": "GazpromTest",
       "projectName": "GazpromTest",
-      "projectPath": "C:\\Users\\jorov\\OneDrive\\Документы\\UiPath\\GazpromTest\\.local",
+      "projectPath": "C:\\Users\\jorov\\Desktop\\gp\\.local",
       "packagesPath": "C:\\Users\\jorov\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jorov\\OneDrive\\Документы\\UiPath\\GazpromTest\\.local"
+      "outputPath": "C:\\Users\\jorov\\Desktop\\gp\\.local"
     },
     "frameworks": {
       "net461": {
