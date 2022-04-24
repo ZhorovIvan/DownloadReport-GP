@@ -3,5 +3,5 @@
 UIPATH project
 
 -python
--mysql
--excel
+-mysql\n
+-excel\n
